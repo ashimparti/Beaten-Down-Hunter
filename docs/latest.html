@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Beaten-Down Hunter — 2026-04-27</title>
+<style>
+*{box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter",sans-serif;background:#0f172a;color:#e2e8f0;padding:28px 22px;line-height:1.45;margin:0;max-width:1200px;margin-left:auto;margin-right:auto}
+.dashboard-header{margin-bottom:24px;padding-bottom:14px;border-bottom:1px solid #334155}
+.dashboard-title{font-size:24px;font-weight:700;color:#fca5a5;margin:0 0 4px;letter-spacing:-.02em}
+.dashboard-subtitle{font-size:13px;color:#94a3b8}
+.empty{padding:60px 22px;text-align:center;color:#94a3b8;background:#1e293b;border:1px dashed #334155;border-radius:12px}
+.empty h2{color:#cbd5e1;margin:0 0 8px}
+
+.pick-bd{background:#1e293b;border:1px solid #334155;border-radius:12px;margin-bottom:22px;overflow:hidden;display:flex;position:relative}
+.tag-side{width:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;letter-spacing:.06em;writing-mode:vertical-rl;transform:rotate(180deg);border-right:1px solid #334155;background:#7f1d1d;color:#fecaca}
+.pick-body{flex:1;padding:0;min-width:0}
+
+.card-header{display:grid;grid-template-columns:auto 1fr auto;align-items:center;padding:16px 22px 14px;gap:16px;border-bottom:1px solid #334155}
+.header-ticker-block{display:flex;align-items:center;gap:10px}
+.card-ticker{color:#c4b5fd;font-size:52px;font-weight:700;text-decoration:none;letter-spacing:-.03em;line-height:1}
+.dislocation-emoji{font-size:18px;opacity:.85}
+.header-middle{display:flex;flex-direction:column;align-items:center;gap:10px}
+.header-scores{display:flex;justify-content:center;align-items:center;gap:12px}
+.score-block{display:flex;flex-direction:column;align-items:center;gap:3px}
+.score-label{font-size:9px;text-transform:uppercase;font-weight:500;letter-spacing:.04em;color:#64748b}
+.score-claude-label{color:#c4b5fd}
+.score-badge{font-size:19px;font-weight:500;padding:5px 14px;border-radius:6px;line-height:1}
+.score-mine{background:#1e293b;border:1px solid #475569;color:#f1f5f9}
+.score-claude{background:#2e1065;border:1px solid #7c3aed;color:#ddd6fe}
+.score-sep{color:#475569;font-size:16px}
+.down-pill{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(90deg,#7f1d1d,#991b1b);border:1px solid #dc2626;color:#fecaca;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700;letter-spacing:-.01em}
+.down-pill .down-emoji{font-size:14px}
+.header-right{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.company-name{color:#cbd5e1;font-size:13px;font-weight:500}
+.price-row{display:flex;align-items:baseline;gap:10px}
+.company-price{color:#f1f5f9;font-size:22px;font-weight:700;line-height:1}
+.bargain-inline{color:#fda4af;font-size:14px;font-weight:600;background:rgba(190,24,93,.15);border:1px solid #be185d;padding:3px 8px;border-radius:5px;line-height:1}
+
+.dislocation-row{padding:14px 22px;background:#0f172a;border-bottom:1px solid #334155}
+.dislocation-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.disloc-count{background:#7c3aed;color:#f5f3ff;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;letter-spacing:0;text-transform:none}
+.disloc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.disloc-pill{display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:6px;font-size:11px;font-weight:600;line-height:1.2}
+.disloc-fired{background:rgba(239,68,68,.18);color:#fca5a5;border:1px solid #dc2626}
+.disloc-not-fired{background:#1e293b;color:#475569;border:1px solid #334155;opacity:.5}
+.disloc-bonus{background:rgba(168,85,247,.18);color:#c4b5fd;border:1px solid #7c3aed}
+.disloc-icon{font-size:12px;flex-shrink:0}
+
+.company-claude-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px 22px}
+.company-box{background:#064e3b;border:1px solid #10b981;border-radius:8px;padding:14px 16px}
+.box-label{font-size:11px;color:#6ee7b7;font-weight:600;letter-spacing:.05em;margin-bottom:8px;text-transform:uppercase}
+.company-blurb{font-size:13px;color:#d1fae5;line-height:1.5;margin-bottom:10px}
+.fund-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px 14px;font-size:12px;border-top:1px dashed #047857;padding-top:8px}
+.fund-row{display:flex;align-items:baseline;gap:8px}
+.fund-label{color:#6ee7b7;font-size:11px;flex-shrink:0;min-width:62px}
+.fund-val{font-weight:600;font-size:12px}
+.fund-up{color:#34d399}.fund-down{color:#f87171}.fund-flat{color:#cbd5e1}.fund-na{color:#64748b;font-style:italic}
+
+.claude-box{background:#1e1b4b;border:1px solid #4c1d95;border-radius:8px;padding:14px 16px}
+.claude-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.claude-c{width:20px;height:20px;background:#6d28d9;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#f5f3ff;font-size:11px;font-weight:700}
+.claude-label-txt{font-size:11px;color:#c4b5fd;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+.claude-tag{margin-left:auto;font-size:14px;padding:6px 14px;border-radius:6px;font-weight:800;letter-spacing:.06em}
+.tag-buy{background:#1e3a8a;color:#93c5fd;border:1px solid #3b82f6}
+.tag-strong-buy{background:#064e3b;color:#6ee7b7;border:1px solid #10b981}
+.tag-skip{background:#7f1d1d;color:#fca5a5;border:1px solid #dc2626}
+.claude-bullet{display:flex;gap:8px;font-size:12px;line-height:1.5;color:#e9d5ff;margin-bottom:6px}
+.claude-bullet>span:first-child{font-size:12px;margin-top:6px;flex-shrink:0}
+.bullet-good>span:first-child{color:#34d399}
+.bullet-warn>span:first-child{color:#fbbf24}
+.bullet-bad>span:first-child{color:#f87171}
+
+.signals-row{display:flex;align-items:center;gap:8px;padding:0 22px 14px;flex-wrap:wrap}
+.sig-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600}
+.sig-buyback{background:rgba(16,185,129,.18);color:#6ee7b7;border:1px solid #10b981}
+.sig-noflag{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid #047857}
+.sig-eps{background:rgba(168,85,247,.18);color:#c4b5fd;border:1px solid #7c3aed}
+.sig-short-good{background:rgba(96,165,250,.15);color:#93c5fd;border:1px solid #2563eb}
+
+.trade-section{padding:0 22px 12px}
+.put-row{display:grid;grid-template-columns:120px 110px 1fr;gap:14px;align-items:center;padding:12px 16px;background:#0f172a;border:1px solid #4c1d95;border-radius:8px;margin-bottom:6px;font-size:13px}
+.put-dte-large{font-size:24px;font-weight:800;color:#c4b5fd;line-height:1;text-align:center;background:#2e1065;border:1px solid #7c3aed;border-radius:8px;padding:10px 8px}
+.put-dte-large.alt{color:#93c5fd;background:#1e3a8a;border-color:#3b82f6}
+.put-dte-large .dte-unit{display:block;font-size:10px;font-weight:600;color:#a78bfa;margin-top:2px}
+.put-strike{font-size:20px;font-weight:700;color:#93c5fd;text-align:center}
+.put-meta-row{display:flex;align-items:center;gap:8px;color:#94a3b8;font-size:12px;flex-wrap:wrap}
+.otm-mult{color:#fbbf24;font-weight:700;font-size:13px}
+.safety-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:12px;font-weight:700;font-size:11px;letter-spacing:.02em}
+.safety-high{background:rgba(16,185,129,.2);color:#6ee7b7;border:1px solid #10b981}
+.safety-mid{background:rgba(251,191,36,.18);color:#fbbf24;border:1px solid #d97706}
+.safety-low{background:rgba(249,115,22,.18);color:#fdba74;border:1px solid #ea580c}
+.safety-danger{background:rgba(239,68,68,.2);color:#fca5a5;border:1px solid #dc2626}
+
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 22px 12px}
+.hero-stat{background:#0f172a;border:1px solid #334155;border-radius:8px;padding:10px 12px}
+.hero-stat-ticker{font-size:9px;color:#94a3b8;letter-spacing:.06em;font-weight:700;margin-bottom:2px}
+.hero-stat-label{font-size:10px;color:#94a3b8;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.hero-stat-val{font-size:18px;font-weight:700;color:#f1f5f9;margin-top:2px}
+.hero-bad{background:linear-gradient(180deg,#7f1d1d,#0f172a);border-color:#dc2626}
+.hero-bad .hero-stat-val{color:#fca5a5}
+.hero-good{background:linear-gradient(180deg,#064e3b,#0f172a);border-color:#10b981}
+.hero-good .hero-stat-val{color:#6ee7b7}
+
+.metrics-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 22px 12px}
+.metric-tile{background:#0f172a;border:1px solid #334155;border-radius:8px;padding:10px 12px}
+.metric-tile-ticker{font-size:9px;color:#c4b5fd;letter-spacing:.06em;font-weight:700;margin-bottom:2px}
+.metric-tile-label{font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em}
+.metric-tile-value{font-size:16px;font-weight:700;color:#f1f5f9;margin-top:4px}
+
+.chart-section{padding:0 22px 12px}
+.chart-svg-box{background:#0f172a;border:1px solid #334155;border-radius:8px;padding:8px;height:130px}
+.chart-svg-box svg{width:100%;height:100%}
+
+.recovery-line{padding:0 22px 12px}
+.recovery-line-text{background:rgba(16,185,129,.08);border-left:3px solid #10b981;padding:10px 14px;font-size:12px;color:#d1fae5;border-radius:4px}
+.recovery-line-text strong{color:#fbbf24}
+.recovery-line-text .key{color:#34d399;font-weight:700}
+
+.support-section{padding:0 22px 12px}
+.support-header{font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;font-weight:600}
+.support-ladder{background:#1e293b;border:1px solid #334155;border-radius:8px;padding:10px 14px;margin-bottom:10px}
+.ladder-row{display:grid;grid-template-columns:70px 14px 1fr;gap:10px;align-items:center;font-size:12px;padding:5px 0}
+.ladder-row.tariff{background:linear-gradient(90deg,rgba(168,85,247,.08),transparent);border-top:1px dashed #4c1d95;border-bottom:1px dashed #4c1d95;padding:6px 0;margin:2px 0}
+.ladder-label{color:#94a3b8;text-transform:uppercase;font-size:10px;letter-spacing:.04em;font-weight:600}
+.ladder-dot{width:10px;height:10px;border-radius:50%}
+.ladder-value{color:#cbd5e1;font-weight:600}
+.ladder-pct{color:#94a3b8;font-size:11px;margin-left:6px;font-weight:500}
+.stress-line-text{background:rgba(168,85,247,.08);border-left:3px solid #7c3aed;padding:10px 14px;font-size:12px;color:#ddd6fe;border-radius:4px}
+.stress-line-text strong{color:#6ee7b7}
+.stress-line-text .never{color:#fbbf24;font-weight:700}
+
+.indicators{background:#0f172a;border:1px solid #334155;border-radius:8px;padding:14px 16px;margin:0 22px 12px}
+.indicators-header{font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;font-weight:600}
+.ind-line{margin-bottom:14px}
+.ind-line-top{display:flex;justify-content:space-between;align-items:baseline;font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+.ind-line-name{font-weight:600}
+.ind-line-val{font-weight:700;font-size:13px;color:#f1f5f9;text-transform:none;letter-spacing:0}
+.bar-track{position:relative;height:8px;background:#1e293b;border-radius:4px;overflow:hidden}
+.bar-marker{position:absolute;top:-3px;bottom:-3px;width:10px;background:#fbbf24;border:1px solid #422006;border-radius:2px;transform:translateX(-50%);z-index:2}
+.bar-zone{position:absolute;top:0;bottom:0}
+.range52-zone-low{left:0;width:33%;background:rgba(239,68,68,.45)}
+.range52-zone-mid{left:33%;width:34%;background:rgba(251,191,36,.45)}
+.range52-zone-high{left:67%;width:33%;background:rgba(16,185,129,.45)}
+.dma-zone-bad{left:0;width:50%;background:rgba(239,68,68,.5)}
+.dma-zone-good{left:50%;width:50%;background:rgba(16,185,129,.5)}
+.rsi-zone-low{left:0;width:30%;background:rgba(16,185,129,.55)}
+.rsi-zone-mid{left:30%;width:40%;background:rgba(100,116,139,.4)}
+.rsi-zone-high{left:70%;width:30%;background:rgba(239,68,68,.55)}
+.boll-zone-low{left:0;width:33%;background:rgba(16,185,129,.55)}
+.boll-zone-mid{left:33%;width:34%;background:rgba(100,116,139,.4)}
+.boll-zone-high{left:67%;width:33%;background:rgba(239,68,68,.55)}
+.bar-labels{display:flex;justify-content:space-between;font-size:9px;color:#64748b;margin-top:3px;text-transform:uppercase;letter-spacing:.05em}
+.indicators-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid #1e293b}
+.ind-mini{background:#1e293b;border-radius:6px;padding:8px 10px}
+.mini-label{font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em}
+.mini-val{font-size:14px;font-weight:700;margin-top:2px;color:#f1f5f9}
+
+.news-section{padding:0 22px 14px}
+.news-header{font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;font-weight:600}
+.news-header strong{color:#c4b5fd}
+.news-item{display:grid;grid-template-columns:18px 1fr 60px;gap:8px;padding:6px 0;font-size:12px;line-height:1.4;border-bottom:1px solid rgba(51,65,85,.4);align-items:baseline}
+.news-item:last-child{border-bottom:none}
+.news-icon{font-size:11px;font-weight:700}
+.news-pos{color:#34d399}
+.news-neg{color:#f87171}
+.news-neu{color:#94a3b8}
+.news-title-link{color:#93c5fd;text-decoration:none}
+.news-date{color:#94a3b8;font-size:11px;text-align:right}
+</style>
+</head>
+<body>
+<div class="dashboard-header">
+    <h1 class="dashboard-title">🔻 Beaten-Down Hunter</h1>
+    <p class="dashboard-subtitle">Strict dislocation scanner · 6 picks · Mon 27 Apr 2026 · 07:25 Dubai</p>
+</div>
+
+    <div class="pick-bd">
+        <div class="tag-side">BD</div>
+        <div class="pick-body">
+            <div class="card-header">
+                <div class="header-ticker-block">
+                    <a href="https://unusualwhales.com/stock/INTU" target="_blank" class="card-ticker">INTU</a>
+                    <span class="dislocation-emoji">🔻</span>
+                </div>
+                <div class="header-middle">
+                    <div class="header-scores">
+                        <div class="score-block">
+                            <div class="score-label">My Score</div>
+                            <div class="score-badge score-mine">9.0</div>
+                        </div>
+                        <span class="score-sep">·</span>
+                        <div class="score-block">
+                            <div class="score-label score-claude-label">Claude</div>
+                            <div class="score-badge score-claude">9.0</div>
+                        </div>
+                    </div>
+                    <div class="down-pill"><span class="down-emoji">📉</span>DOWN 51% from high · sharp drawdown</div>
+                </div>
+                <div class="header-right">
+                    <div class="company-name">Intuit Inc.</div>
+                    <div class="price-row">
+                        <span class="company-price">$395.95</span>
+                        <span class="bargain-inline">🎯 $533</span>
+                    </div>
+                </div>
+            </div>
+            
+            
+        <div class="dislocation-row">
+            <div class="dislocation-header">
+                <span>🎯 Dislocation signals fired (last 14 days)</span>
+                <span class="disloc-count">5 / 6 fired</span>
+            </div>
+            <div class="disloc-grid">
+                <div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>Below SMA50 by 4%</span></div><div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>RSI hit 15 (14d ago)</span></div><div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>Touched lower Bollinger</span></div><div class="disloc-pill disloc-not-fired"><span class="disloc-icon">○</span><span>1mo perf -7%</span></div><div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>Near 52w low (13% off)</span></div><div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>5y all-time low</span></div><div class="disloc-pill disloc-bonus"><span class="disloc-icon">⚡</span><span>Recovery: RSI now 44 (rising)</span></div>
+            </div>
+        </div>
+            
+            <div class="company-claude-row">
+                <div class="company-box">
+                    <div class="box-label">🍕 The company</div>
+                    <div class="company-blurb">Intuit Inc.</div>
+                    <div class="fund-grid"><div class="fund-row"><span class="fund-label">Revenue</span><span class="fund-val">$18.8B <span class="fund-up">▲ 16%</span></span></div><div class="fund-row"><span class="fund-label">Profit</span><span class="fund-val">$3.9B <span class="fund-up">▲ 31%</span></span></div><div class="fund-row"><span class="fund-label">Free cash</span><span class="fund-val">$6.1B <span class="fund-up">▲ 31%</span></span></div><div class="fund-row"><span class="fund-label">Debt/Eq</span><span class="fund-val">0.36 <span class="fund-up">✓ low</span></span></div></div>
+                </div>
+                <div class="claude-box">
+                    <div class="claude-header">
+                        <div class="claude-c">C</div>
+                        <div class="claude-label-txt">Claude says</div>
+                        <div class="claude-tag tag-strong-buy">STRONG BUY</div>
+                    </div>
+                    <div class="claude-bullet bullet-warn"><span>●</span><span>Claude API unavailable - using algo score only</span></div>
+                </div>
+            </div>
+            
+            <div class="signals-row"><span class="sig-chip sig-buyback">💰 Buybacks $2.8B</span><span class="sig-chip sig-noflag">✓ No red flags</span><span class="sig-chip sig-eps">⚡ IV rank 74%</span><span class="sig-chip sig-short-good">📉 Short int 3.9% ✓</span></div>
+            
+            <div class="trade-section">
+                <div class="put-row">
+        <div class="put-dte-large">263<span class="dte-unit">DTE</span></div>
+        <span class="put-strike">$200P</span>
+        <div class="put-meta-row">
+            <span>2027-01</span>
+            <span>·</span>
+            <span>-7Δ</span>
+            <span>·</span>
+            <span>49% OTM</span>
+            <span class="otm-mult">×3</span>
+            <span class="safety-pill safety-high">🛡 10/10 safe</span>
+        </div>
+    </div>
+                <div class="put-row">
+            <div class="put-dte-large alt">25<span class="dte-unit">DTE</span></div>
+            <span class="put-strike">$325P</span>
+            <div class="put-meta-row">
+                <span>2026-05-22</span>
+                <span>·</span>
+                <span>-15Δ</span>
+                <span>·</span>
+                <span>18% OTM</span>
+                <span class="otm-mult">×3</span>
+                <span class="safety-pill safety-low">🛡 5/10 risky</span>
+            </div>
+        </div>
+            </div>
+            
+            <div class="hero-stats">
+        <div class="hero-stat hero-bad">
+            <div class="hero-stat-ticker">INTU</div>
+            <div class="hero-stat-label">📉 Off 52w high</div>
+            <div class="hero-stat-val">-51%</div>
+        </div>
+        <div class="hero-stat hero-bad">
+            <div class="hero-stat-ticker">INTU</div>
+            <div class="hero-stat-label">⏰ RSI low</div>
+            <div class="hero-stat-val">14d ago</div>
+        </div>
+        <div class="hero-stat hero-good">
+            <div class="hero-stat-ticker">INTU</div>
+            <div class="hero-stat-label">⚡ Off 52w low</div>
+            <div class="hero-stat-val">+13%</div>
+        </div>
+        <div class="hero-stat hero-good">
+            <div class="hero-stat-ticker">INTU</div>
+            <div class="hero-stat-label">🛡️ IV rank</div>
+            <div class="hero-stat-val">74%</div>
+        </div>
+    </div>
+            <div class="metrics-strip">
+        <div class="metric-tile">
+            <div class="metric-tile-ticker">INTU</div>
+            <div class="metric-tile-label">Market cap</div>
+            <div class="metric-tile-value">$110.2B</div>
+        </div>
+        <div class="metric-tile">
+            <div class="metric-tile-ticker">INTU</div>
+            <div class="metric-tile-label">P/E ratio</div>
+            <div class="metric-tile-value">25.8</div>
+        </div>
+        <div class="metric-tile">
+            <div class="metric-tile-ticker">INTU</div>
+            <div class="metric-tile-label">Dividend</div>
+            <div class="metric-tile-value">1.2%</div>
+        </div>
+        <div class="metric-tile">
+            <div class="metric-tile-ticker">INTU</div>
+            <div class="metric-tile-label">EPS growth</div>
+            <div class="metric-tile-value">48%</div>
+        </div>
+    </div>
+            <div class="chart-section">
+        <div class="chart-svg-box">
+            <svg viewBox="0 0 700 110" xmlns="http://www.w3.org/2000/svg">
+                <line x1="20" y1="20" x2="680" y2="20" stroke="#7c3aed" stroke-dasharray="3,3" stroke-width="0.6"/>
+                <text x="22" y="16" fill="#a78bfa" font-size="9" font-weight="600">52w high $807</text>
+                <line x1="20" y1="92" x2="680" y2="92" stroke="#dc2626" stroke-dasharray="3,3" stroke-width="0.6"/>
+                <text x="22" y="102" fill="#fca5a5" font-size="9" font-weight="600">52w low $351</text>
+                <text x="660" y="60" fill="#f87171" font-size="11" font-weight="700" text-anchor="middle">-36% YoY</text>
+            </svg>
+        </div>
+    </div>
+            <div class="recovery-line">
+        <div class="recovery-line-text">
+            🌱 <strong>Recovery thesis:</strong> Down 51% from high. RSI bounced from <span class="key">15 → 44</span>. 1-month perf <span class="key">-7%</span>. Watch for stabilization.
+        </div>
+    </div>
+            <div class="support-section">
+        <div class="support-header">🪜 Support floors · stress test</div>
+        <div class="support-ladder"><div class="ladder-row">
+            <span class="ladder-label" style="color:#f1f5f9;">Price</span>
+            <span class="ladder-dot" style="background:#fbbf24;"></span>
+            <span class="ladder-value" style="color:#f1f5f9;">$396 now <span class="ladder-pct"></span></span>
+        </div><div class="ladder-row">
+            <span class="ladder-label" style="color:#cbd5e1;">Support</span>
+            <span class="ladder-dot" style="background:#3b82f6;"></span>
+            <span class="ladder-value" style="color:#cbd5e1;">$351 <span class="ladder-pct">−11% (14d low)</span></span>
+        </div><div class="ladder-row">
+            <span class="ladder-label" style="color:#6ee7b7;">Strike</span>
+            <span class="ladder-dot" style="background:#10b981;"></span>
+            <span class="ladder-value" style="color:#6ee7b7;">$200 <span class="ladder-pct">−49% ✓</span></span>
+        </div></div>
+        <div class="stress-line-text">
+            🛡️ <strong>Stress test:</strong> Strike $200 sits <strong>62% below</strong> the April 2025 tariff panic floor of $533. <span class="never">Stock has never traded at $200 in 5 years.</span>
+        </div>
+    </div>
+            
+    <div class="indicators">
+        <div class="indicators-header">INTU · technicals</div>
+        
+    <div class="ind-line">
+        <div class="ind-line-top"><span class="ind-line-name">52w range</span><span class="ind-line-val">$395.95</span></div>
+        <div class="bar-track">
+            <div class="bar-zone range52-zone-low"></div>
+            <div class="bar-zone range52-zone-mid"></div>
+            <div class="bar-zone range52-zone-high"></div>
+            <div class="bar-marker" style="left:10%;"></div>
+        </div>
+        <div class="bar-labels"><span>$351 LOW</span><span>$579</span><span>$807 HIGH</span></div>
+    </div>
+        
+        <div class="ind-line">
+            <div class="ind-line-top"><span class="ind-line-name">50d MA</span><span class="ind-line-val" style="color:#f87171;">-4% below</span></div>
+            <div class="bar-track">
+                <div class="bar-zone dma-zone-bad"></div>
+                <div class="bar-zone dma-zone-good"></div>
+                <div class="bar-marker" style="left:41%;"></div>
+            </div>
+        </div>
+        
+        <div class="ind-line">
+            <div class="ind-line-top"><span class="ind-line-name">200d MA</span><span class="ind-line-val" style="color:#f87171;">-34% below</span></div>
+            <div class="bar-track">
+                <div class="bar-zone dma-zone-bad"></div>
+                <div class="bar-zone dma-zone-good"></div>
+                <div class="bar-marker" style="left:10%;"></div>
+            </div>
+        </div>
+        
+        <div class="ind-line">
+            <div class="ind-line-top"><span class="ind-line-name">RSI 14</span><span class="ind-line-val" style="color:#fbbf24;">44 · recovering</span></div>
+            <div class="bar-track">
+                <div class="bar-zone rsi-zone-low"></div>
+                <div class="bar-zone rsi-zone-mid"></div>
+                <div class="bar-zone rsi-zone-high"></div>
+                <div class="bar-marker" style="left:44%;"></div>
+            </div>
+            <div class="bar-labels"><span>0 oversold</span><span>50</span><span>100 overbought</span></div>
+        </div>
+        
+        <div class="ind-line">
+            <div class="ind-line-top"><span class="ind-line-name">Bollinger</span><span class="ind-line-val" style="color:#cbd5e1;">Normal</span></div>
+            <div class="bar-track">
+                <div class="bar-zone boll-zone-low"></div>
+                <div class="bar-zone boll-zone-mid"></div>
+                <div class="bar-zone boll-zone-high"></div>
+                <div class="bar-marker" style="left:36%;"></div>
+            </div>
+            <div class="bar-labels"><span>Cheap</span><span>Normal</span><span>Expensive</span></div>
+        </div>
+        
+    <div class="indicators-row">
+        <div class="ind-mini"><div class="mini-label">IV rank</div><div class="mini-val" style="color:#6ee7b7;">74%</div></div>
+        <div class="ind-mini"><div class="mini-label">Beta</div><div class="mini-val">1.21</div></div>
+        <div class="ind-mini"><div class="mini-label">Dividend</div><div class="mini-val">1.2%</div></div>
+    </div>
+    </div>
+            
+            <div class="news-section">
+                <div class="news-header">📰 Latest <strong>INTU</strong> news</div>
+                <div class="news-item"><span class="news-icon news-neu">●</span><span></span><span class="news-date"></span></div><div class="news-item"><span class="news-icon news-neu">●</span><span></span><span class="news-date"></span></div><div class="news-item"><span class="news-icon news-neu">●</span><span></span><span class="news-date"></span></div><div class="news-item"><span class="news-icon news-neu">●</span><span></span><span class="news-date"></span></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="pick-bd">
+        <div class="tag-side">BD</div>
+        <div class="pick-body">
+            <div class="card-header">
+                <div class="header-ticker-block">
+                    <a href="https://unusualwhales.com/stock/NOW" target="_blank" class="card-ticker">NOW</a>
+                    <span class="dislocation-emoji">🔻</span>
+                </div>
+                <div class="header-middle">
+                    <div class="header-scores">
+                        <div class="score-block">
+                            <div class="score-label">My Score</div>
+                            <div class="score-badge score-mine">9.0</div>
+                        </div>
+                        <span class="score-sep">·</span>
+                        <div class="score-block">
+                            <div class="score-label score-claude-label">Claude</div>
+                            <div class="score-badge score-claude">9.0</div>
+                        </div>
+                    </div>
+                    <div class="down-pill"><span class="down-emoji">📉</span>DOWN 57% from high · sharp drawdown</div>
+                </div>
+                <div class="header-right">
+                    <div class="company-name">ServiceNow, Inc.</div>
+                    <div class="price-row">
+                        <span class="company-price">$90.17</span>
+                        <span class="bargain-inline">🎯 $136</span>
+                    </div>
+                </div>
+            </div>
+            
+            
+        <div class="dislocation-row">
+            <div class="dislocation-header">
+                <span>🎯 Dislocation signals fired (last 14 days)</span>
+                <span class="disloc-count">5 / 6 fired</span>
+            </div>
+            <div class="disloc-grid">
+                <div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>Below SMA50 by 14%</span></div><div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>RSI hit 17 (14d ago)</span></div><div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>Touched lower Bollinger</span></div><div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>1mo perf -13%</span></div><div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>Near 52w low (9% off)</span></div><div class="disloc-pill disloc-not-fired"><span class="disloc-icon">○</span><span>5y all-time low</span></div><div class="disloc-pill disloc-bonus"><span class="disloc-icon">⚡</span><span>Recovery: RSI now 41 (rising)</span></div>
+            </div>
+        </div>
+            
+            <div class="company-claude-row">
+                <div class="company-box">
+                    <div class="box-label">🍕 The company</div>
+                    <div class="company-blurb">ServiceNow, Inc.</div>
+                    <div class="fund-grid"><div class="fund-row"><span class="fund-label">Revenue</span><span class="fund-val">$13.3B <span class="fund-up">▲ 21%</span></span></div><div class="fund-row"><span class="fund-label">Profit</span><span class="fund-val">$1.7B <span class="fund-up">▲ 23%</span></span></div><div class="fund-row"><span class="fund-label">Free cash</span><span class="fund-val">$4.5B <span class="fund-up">▲ 34%</span></span></div><div class="fund-row"><span class="fund-label">Debt/Eq</span><span class="fund-val">0.21 <span class="fund-up">✓ low</span></span></div></div>
+                </div>
+                <div class="claude-box">
+                    <div class="claude-header">
+                        <div class="claude-c">C</div>
+                        <div class="claude-label-txt">Claude says</div>
+                        <div class="claude-tag tag-strong-buy">STRONG BUY</div>
+                    </div>
+                    <div class="claude-bullet bullet-warn"><span>●</span><span>Claude API unavailable - using algo score only</span></div>
+                </div>
+            </div>
+            
+            <div class="signals-row"><span class="sig-chip sig-buyback">💰 Buybacks $1.8B</span><span class="sig-chip sig-noflag">✓ No red flags</span><span class="sig-chip sig-eps">⚡ IV rank 100%</span><span class="sig-chip sig-short-good">📉 Short int 3.8% ✓</span></div>
+            
+            <div class="trade-section">
+                <div class="put-row">
+        <div class="put-dte-large">263<span class="dte-unit">DTE</span></div>
+        <span class="put-strike">$50P</span>
+        <div class="put-meta-row">
+            <span>2027-01</span>
+            <span>·</span>
+            <span>-7Δ</span>
+            <span>·</span>
+            <span>45% OTM</span>
+            <span class="otm-mult">×3</span>
+            <span class="safety-pill safety-mid">🛡 7/10 ok</span>
+        </div>
+    </div>
+                <div class="put-row">
+            <div class="put-dte-large alt">25<span class="dte-unit">DTE</span></div>
+            <span class="put-strike">$75P</span>
+            <div class="put-meta-row">
+                <span>2026-05-22</span>
+                <span>·</span>
+                <span>-15Δ</span>
+                <span>·</span>
+                <span>17% OTM</span>
+                <span class="otm-mult">×3</span>
+                <span class="safety-pill safety-danger">🛡 2/10 danger</span>
+            </div>
+        </div>
+            </div>
+            
+            <div class="hero-stats">
+        <div class="hero-stat hero-bad">
+            <div class="hero-stat-ticker">NOW</div>
+            <div class="hero-stat-label">📉 Off 52w high</div>
+            <div class="hero-stat-val">-57%</div>
+        </div>
+        <div class="hero-stat hero-bad">
+            <div class="hero-stat-ticker">NOW</div>
+            <div class="hero-stat-label">⏰ RSI low</div>
+            <div class="hero-stat-val">14d ago</div>
+        </div>
+        <div class="hero-stat hero-good">
+            <div class="hero-stat-ticker">NOW</div>
+            <div class="hero-stat-label">⚡ Off 52w low</div>
+            <div class="hero-stat-val">+9%</div>
+        </div>
+        <div class="hero-stat hero-good">
+            <div class="hero-stat-ticker">NOW</div>
+            <div class="hero-stat-label">🛡️ IV rank</div>
+            <div class="hero-stat-val">100%</div>
+        </div>
+    </div>
+            <div class="metrics-strip">
+        <div class="metric-tile">
+            <div class="metric-tile-ticker">NOW</div>
+            <div class="metric-tile-label">Market cap</div>
+            <div class="metric-tile-value">$93.0B</div>
+        </div>
+        <div class="metric-tile">
+            <div class="metric-tile-ticker">NOW</div>
+            <div class="metric-tile-label">P/E ratio</div>
+            <div class="metric-tile-value">53.7</div>
+        </div>
+        <div class="metric-tile">
+            <div class="metric-tile-ticker">NOW</div>
+            <div class="metric-tile-label">Dividend</div>
+            <div class="metric-tile-value">—</div>
+        </div>
+        <div class="metric-tile">
+            <div class="metric-tile-ticker">NOW</div>
+            <div class="metric-tile-label">EPS growth</div>
+            <div class="metric-tile-value">2%</div>
+        </div>
+    </div>
+            <div class="chart-section">
+        <div class="chart-svg-box">
+            <svg viewBox="0 0 700 110" xmlns="http://www.w3.org/2000/svg">
+                <line x1="20" y1="20" x2="680" y2="20" stroke="#7c3aed" stroke-dasharray="3,3" stroke-width="0.6"/>
+                <text x="22" y="16" fill="#a78bfa" font-size="9" font-weight="600">52w high $209</text>
+                <line x1="20" y1="92" x2="680" y2="92" stroke="#dc2626" stroke-dasharray="3,3" stroke-width="0.6"/>
+                <text x="22" y="102" fill="#fca5a5" font-size="9" font-weight="600">52w low $83</text>
+                <text x="660" y="60" fill="#f87171" font-size="11" font-weight="700" text-anchor="middle">-52% YoY</text>
+            </svg>
+        </div>
+    </div>
+            <div class="recovery-line">
+        <div class="recovery-line-text">
+            🌱 <strong>Recovery thesis:</strong> Down 57% from high. RSI bounced from <span class="key">17 → 41</span>. 1-month perf <span class="key">-13%</span>. Watch for stabilization.
+        </div>
+    </div>
+            <div class="support-section">
+        <div class="support-header">🪜 Support floors · stress test</div>
+        <div class="support-ladder"><div class="ladder-row">
+            <span class="ladder-label" style="color:#f1f5f9;">Price</span>
+            <span class="ladder-dot" style="background:#fbbf24;"></span>
+            <span class="ladder-value" style="color:#f1f5f9;">$90 now <span class="ladder-pct"></span></span>
+        </div><div class="ladder-row">
+            <span class="ladder-label" style="color:#cbd5e1;">Support</span>
+            <span class="ladder-dot" style="background:#3b82f6;"></span>
+            <span class="ladder-value" style="color:#cbd5e1;">$83 <span class="ladder-pct">−8% (14d low)</span></span>
+        </div><div class="ladder-row">
+            <span class="ladder-label" style="color:#6ee7b7;">Strike</span>
+            <span class="ladder-dot" style="background:#10b981;"></span>
+            <span class="ladder-value" style="color:#6ee7b7;">$50 <span class="ladder-pct">−45% ✓</span></span>
+        </div></div>
+        <div class="stress-line-text">
+            🛡️ <strong>Stress test:</strong> Strike $50 sits <strong>63% below</strong> the April 2025 tariff panic floor of $136. <span class="never">Stock has never traded at $50 in 5 years.</span>
+        </div>
+    </div>
+            
+    <div class="indicators">
+        <div class="indicators-header">NOW · technicals</div>
+        
+    <div class="ind-line">
+        <div class="ind-line-top"><span class="ind-line-name">52w range</span><span class="ind-line-val">$90.17</span></div>
+        <div class="bar-track">
+            <div class="bar-zone range52-zone-low"></div>
+            <div class="bar-zone range52-zone-mid"></div>
+            <div class="bar-zone range52-zone-high"></div>
+            <div class="bar-marker" style="left:6%;"></div>
+        </div>
+        <div class="bar-labels"><span>$83 LOW</span><span>$146</span><span>$209 HIGH</span></div>
+    </div>
+        
+        <div class="ind-line">
+            <div class="ind-line-top"><span class="ind-line-name">50d MA</span><span class="ind-line-val" style="color:#f87171;">-14% below</span></div>
+            <div class="bar-track">
+                <div class="bar-zone dma-zone-bad"></div>
+                <div class="bar-zone dma-zone-good"></div>
+                <div class="bar-marker" style="left:22%;"></div>
+            </div>
+        </div>
+        
+        <div class="ind-line">
+            <div class="ind-line-top"><span class="ind-line-name">200d MA</span><span class="ind-line-val" style="color:#f87171;">-41% below</span></div>
+            <div class="bar-track">
+                <div class="bar-zone dma-zone-bad"></div>
+                <div class="bar-zone dma-zone-good"></div>
+                <div class="bar-marker" style="left:10%;"></div>
+            </div>
+        </div>
+        
+        <div class="ind-line">
+            <div class="ind-line-top"><span class="ind-line-name">RSI 14</span><span class="ind-line-val" style="color:#fbbf24;">41 · recovering</span></div>
+            <div class="bar-track">
+                <div class="bar-zone rsi-zone-low"></div>
+                <div class="bar-zone rsi-zone-mid"></div>
+                <div class="bar-zone rsi-zone-high"></div>
+                <div class="bar-marker" style="left:41%;"></div>
+            </div>
+            <div class="bar-labels"><span>0 oversold</span><span>50</span><span>100 overbought</span></div>
+        </div>
+        
+        <div class="ind-line">
+            <div class="ind-line-top"><span class="ind-line-name">Bollinger</span><span class="ind-line-val" style="color:#34d399;">Cheap zone</span></div>
+            <div class="bar-track">
+                <div class="bar-zone boll-zone-low"></div>
+                <div class="bar-zone boll-zone-mid"></div>
+                <div class="bar-zone boll-zone-high"></div>
+                <div class="bar-marker" style="left:11%;"></div>
+            </div>
+            <div class="bar-labels"><span>Cheap</span><span>Normal</span><span>Expensive</span></div>
+        </div>
+        
+    <div class="indicators-row">
+        <div class="ind-mini"><div class="mini-label">IV rank</div><div class="mini-val" style="color:#6ee7b7;">100%</div></div>
+        <div class="ind-mini"><div class="mini-label">Beta</div><div class="mini-val">1.0</div></div>
+        <div class="ind-mini"><div class="mini-label">Dividend</div><div class="mini-val">—</div></div>
+    </div>
+    </div>
+            
+            <div class="news-section">
+                <div class="news-header">📰 Latest <strong>NOW</strong> news</div>
+                <div class="news-item"><span class="news-icon news-neu">●</span><span></span><span class="news-date"></span></div><div class="news-item"><span class="news-icon news-neu">●</span><span></span><span class="news-date"></span></div><div class="news-item"><span class="news-icon news-neu">●</span><span></span><span class="news-date"></span></div><div class="news-item"><span class="news-icon news-neu">●</span><span></span><span class="news-date"></span></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="pick-bd">
+        <div class="tag-side">BD</div>
+        <div class="pick-body">
+            <div class="card-header">
+                <div class="header-ticker-block">
+                    <a href="https://unusualwhales.com/stock/VEEV" target="_blank" class="card-ticker">VEEV</a>
+                    <span class="dislocation-emoji">🔻</span>
+                </div>
+                <div class="header-middle">
+                    <div class="header-scores">
+                        <div class="score-block">
+                            <div class="score-label">My Score</div>
+                            <div class="score-badge score-mine">9.0</div>
+                        </div>
+                        <span class="score-sep">·</span>
+                        <div class="score-block">
+                            <div class="score-label score-claude-label">Claude</div>
+                            <div class="score-badge score-claude">9.0</div>
+                        </div>
+                    </div>
+                    <div class="down-pill"><span class="down-emoji">📉</span>DOWN 47% from high · sharp drawdown</div>
+                </div>
+                <div class="header-right">
+                    <div class="company-name">Veeva Systems Inc.</div>
+                    <div class="price-row">
+                        <span class="company-price">$161.13</span>
+                        <span class="bargain-inline">🎯 $202</span>
+                    </div>
+                </div>
+            </div>
+            
+            
+        <div class="dislocation-row">
+            <div class="dislocation-header">
+                <span>🎯 Dislocation signals fired (last 14 days)</span>
+                <span class="disloc-count">5 / 6 fired</span>
+            </div>
+            <div class="disloc-grid">
+                <div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>Below SMA50 by 9%</span></div><div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>RSI hit 14 (14d ago)</span></div><div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>Touched lower Bollinger</span></div><div class="disloc-pill disloc-not-fired"><span class="disloc-icon">○</span><span>1mo perf -10%</span></div><div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>Near 52w low (6% off)</span></div><div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>5y all-time low</span></div><div class="disloc-pill disloc-bonus"><span class="disloc-icon">⚡</span><span>Recovery: RSI now 38 (rising)</span></div>
+            </div>
+        </div>
+            
+            <div class="company-claude-row">
+                <div class="company-box">
+                    <div class="box-label">🍕 The company</div>
+                    <div class="company-blurb">Veeva Systems Inc.</div>
+                    <div class="fund-grid"><div class="fund-row"><span class="fund-label">Revenue</span><span class="fund-val">$3.2B <span class="fund-up">▲ 16%</span></span></div><div class="fund-row"><span class="fund-label">Profit</span><span class="fund-val">$909M <span class="fund-up">▲ 27%</span></span></div><div class="fund-row"><span class="fund-label">Free cash</span><span class="fund-val">$1.4B <span class="fund-up">▲ 30%</span></span></div><div class="fund-row"><span class="fund-label">Debt/Eq</span><span class="fund-val">1.33 <span class="fund-flat">↔ moderate</span></span></div></div>
+                </div>
+                <div class="claude-box">
+                    <div class="claude-header">
+                        <div class="claude-c">C</div>
+                        <div class="claude-label-txt">Claude says</div>
+                        <div class="claude-tag tag-strong-buy">STRONG BUY</div>
+                    </div>
+                    <div class="claude-bullet bullet-warn"><span>●</span><span>Claude API unavailable - using algo score only</span></div>
+                </div>
+            </div>
+            
+            <div class="signals-row"><span class="sig-chip sig-buyback">💰 Buybacks $0.2B</span><span class="sig-chip sig-noflag">✓ No red flags</span><span class="sig-chip sig-eps">⚡ IV rank 59%</span><span class="sig-chip sig-short-good">📉 Short int 3.9% ✓</span></div>
+            
+            <div class="trade-section">
+                <div class="put-row">
+        <div class="put-dte-large">263<span class="dte-unit">DTE</span></div>
+        <span class="put-strike">$90P</span>
+        <div class="put-meta-row">
+            <span>2027-01</span>
+            <span>·</span>
+            <span>-7Δ</span>
+            <span>·</span>
+            <span>44% OTM</span>
+            <span class="otm-mult">×3</span>
+            <span class="safety-pill safety-high">🛡 9/10 safe</span>
+        </div>
+    </div>
+                
+            </div>
+            
+            <div class="hero-stats">
+        <div class="hero-stat hero-bad">
+            <div class="hero-stat-ticker">VEEV</div>
+            <div class="hero-stat-label">📉 Off 52w high</div>
+            <div class="hero-stat-val">-47%</div>
+        </div>
+        <div class="hero-stat hero-bad">
+            <div class="hero-stat-ticker">VEEV</div>
+            <div class="hero-stat-label">⏰ RSI low</div>
+            <div class="hero-stat-val">14d ago</div>
+        </div>
+        <div class="hero-stat hero-good">
+            <div class="hero-stat-ticker">VEEV</div>
+            <div class="hero-stat-label">⚡ Off 52w low</div>
+            <div class="hero-stat-val">+6%</div>
+        </div>
+        <div class="hero-stat hero-good">
+            <div class="hero-stat-ticker">VEEV</div>
+            <div class="hero-stat-label">🛡️ IV rank</div>
+            <div class="hero-stat-val">59%</div>
+        </div>
+    </div>
+            <div class="metrics-strip">
+        <div class="metric-tile">
+            <div class="metric-tile-ticker">VEEV</div>
+            <div class="metric-tile-label">Market cap</div>
+            <div class="metric-tile-value">$26.5B</div>
+        </div>
+        <div class="metric-tile">
+            <div class="metric-tile-ticker">VEEV</div>
+            <div class="metric-tile-label">P/E ratio</div>
+            <div class="metric-tile-value">29.6</div>
+        </div>
+        <div class="metric-tile">
+            <div class="metric-tile-ticker">VEEV</div>
+            <div class="metric-tile-label">Dividend</div>
+            <div class="metric-tile-value">—</div>
+        </div>
+        <div class="metric-tile">
+            <div class="metric-tile-ticker">VEEV</div>
+            <div class="metric-tile-label">EPS growth</div>
+            <div class="metric-tile-value">23%</div>
+        </div>
+    </div>
+            <div class="chart-section">
+        <div class="chart-svg-box">
+            <svg viewBox="0 0 700 110" xmlns="http://www.w3.org/2000/svg">
+                <line x1="20" y1="20" x2="680" y2="20" stroke="#7c3aed" stroke-dasharray="3,3" stroke-width="0.6"/>
+                <text x="22" y="16" fill="#a78bfa" font-size="9" font-weight="600">52w high $306</text>
+                <line x1="20" y1="92" x2="680" y2="92" stroke="#dc2626" stroke-dasharray="3,3" stroke-width="0.6"/>
+                <text x="22" y="102" fill="#fca5a5" font-size="9" font-weight="600">52w low $151</text>
+                <text x="660" y="60" fill="#f87171" font-size="11" font-weight="700" text-anchor="middle">-29% YoY</text>
+            </svg>
+        </div>
+    </div>
+            <div class="recovery-line">
+        <div class="recovery-line-text">
+            🌱 <strong>Recovery thesis:</strong> Down 47% from high. RSI bounced from <span class="key">14 → 38</span>. 1-month perf <span class="key">-10%</span>. Watch for stabilization.
+        </div>
+    </div>
+            <div class="support-section">
+        <div class="support-header">🪜 Support floors · stress test</div>
+        <div class="support-ladder"><div class="ladder-row">
+            <span class="ladder-label" style="color:#f1f5f9;">Price</span>
+            <span class="ladder-dot" style="background:#fbbf24;"></span>
+            <span class="ladder-value" style="color:#f1f5f9;">$161 now <span class="ladder-pct"></span></span>
+        </div><div class="ladder-row">
+            <span class="ladder-label" style="color:#cbd5e1;">Support</span>
+            <span class="ladder-dot" style="background:#3b82f6;"></span>
+            <span class="ladder-value" style="color:#cbd5e1;">$151 <span class="ladder-pct">−6% (14d low)</span></span>
+        </div><div class="ladder-row">
+            <span class="ladder-label" style="color:#6ee7b7;">Strike</span>
+            <span class="ladder-dot" style="background:#10b981;"></span>
+            <span class="ladder-value" style="color:#6ee7b7;">$90 <span class="ladder-pct">−44% ✓</span></span>
+        </div></div>
+        <div class="stress-line-text">
+            🛡️ <strong>Stress test:</strong> Strike $90 sits <strong>55% below</strong> the April 2025 tariff panic floor of $202. <span class="never">Stock has never traded at $90 in 5 years.</span>
+        </div>
+    </div>
+            
+    <div class="indicators">
+        <div class="indicators-header">VEEV · technicals</div>
+        
+    <div class="ind-line">
+        <div class="ind-line-top"><span class="ind-line-name">52w range</span><span class="ind-line-val">$161.13</span></div>
+        <div class="bar-track">
+            <div class="bar-zone range52-zone-low"></div>
+            <div class="bar-zone range52-zone-mid"></div>
+            <div class="bar-zone range52-zone-high"></div>
+            <div class="bar-marker" style="left:6%;"></div>
+        </div>
+        <div class="bar-labels"><span>$151 LOW</span><span>$229</span><span>$306 HIGH</span></div>
+    </div>
+        
+        <div class="ind-line">
+            <div class="ind-line-top"><span class="ind-line-name">50d MA</span><span class="ind-line-val" style="color:#f87171;">-9% below</span></div>
+            <div class="bar-track">
+                <div class="bar-zone dma-zone-bad"></div>
+                <div class="bar-zone dma-zone-good"></div>
+                <div class="bar-marker" style="left:33%;"></div>
+            </div>
+        </div>
+        
+        <div class="ind-line">
+            <div class="ind-line-top"><span class="ind-line-name">200d MA</span><span class="ind-line-val" style="color:#f87171;">-33% below</span></div>
+            <div class="bar-track">
+                <div class="bar-zone dma-zone-bad"></div>
+                <div class="bar-zone dma-zone-good"></div>
+                <div class="bar-marker" style="left:10%;"></div>
+            </div>
+        </div>
+        
+        <div class="ind-line">
+            <div class="ind-line-top"><span class="ind-line-name">RSI 14</span><span class="ind-line-val" style="color:#fbbf24;">38 · recovering</span></div>
+            <div class="bar-track">
+                <div class="bar-zone rsi-zone-low"></div>
+                <div class="bar-zone rsi-zone-mid"></div>
+                <div class="bar-zone rsi-zone-high"></div>
+                <div class="bar-marker" style="left:38%;"></div>
+            </div>
+            <div class="bar-labels"><span>0 oversold</span><span>50</span><span>100 overbought</span></div>
+        </div>
+        
+        <div class="ind-line">
+            <div class="ind-line-top"><span class="ind-line-name">Bollinger</span><span class="ind-line-val" style="color:#34d399;">Cheap zone</span></div>
+            <div class="bar-track">
+                <div class="bar-zone boll-zone-low"></div>
+                <div class="bar-zone boll-zone-mid"></div>
+                <div class="bar-zone boll-zone-high"></div>
+                <div class="bar-marker" style="left:14%;"></div>
+            </div>
+            <div class="bar-labels"><span>Cheap</span><span>Normal</span><span>Expensive</span></div>
+        </div>
+        
+    <div class="indicators-row">
+        <div class="ind-mini"><div class="mini-label">IV rank</div><div class="mini-val" style="color:#fbbf24;">59%</div></div>
+        <div class="ind-mini"><div class="mini-label">Beta</div><div class="mini-val">1.1</div></div>
+        <div class="ind-mini"><div class="mini-label">Dividend</div><div class="mini-val">—</div></div>
+    </div>
+    </div>
+            
+            <div class="news-section">
+                <div class="news-header">📰 Latest <strong>VEEV</strong> news</div>
+                <div class="news-item"><span class="news-icon news-neu">●</span><span></span><span class="news-date"></span></div><div class="news-item"><span class="news-icon news-neu">●</span><span></span><span class="news-date"></span></div><div class="news-item"><span class="news-icon news-neu">●</span><span></span><span class="news-date"></span></div><div class="news-item"><span class="news-icon news-neu">●</span><span></span><span class="news-date"></span></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="pick-bd">
+        <div class="tag-side">BD</div>
+        <div class="pick-body">
+            <div class="card-header">
+                <div class="header-ticker-block">
+                    <a href="https://unusualwhales.com/stock/ACN" target="_blank" class="card-ticker">ACN</a>
+                    <span class="dislocation-emoji">🔻</span>
+                </div>
+                <div class="header-middle">
+                    <div class="header-scores">
+                        <div class="score-block">
+                            <div class="score-label">My Score</div>
+                            <div class="score-badge score-mine">8.5</div>
+                        </div>
+                        <span class="score-sep">·</span>
+                        <div class="score-block">
+                            <div class="score-label score-claude-label">Claude</div>
+                            <div class="score-badge score-claude">8.5</div>
+                        </div>
+                    </div>
+                    <div class="down-pill"><span class="down-emoji">📉</span>DOWN 45% from high · sharp drawdown</div>
+                </div>
+                <div class="header-right">
+                    <div class="company-name">Accenture plc</div>
+                    <div class="price-row">
+                        <span class="company-price">$178.36</span>
+                        <span class="bargain-inline">🎯 $275</span>
+                    </div>
+                </div>
+            </div>
+            
+            
+        <div class="dislocation-row">
+            <div class="dislocation-header">
+                <span>🎯 Dislocation signals fired (last 14 days)</span>
+                <span class="disloc-count">5 / 6 fired</span>
+            </div>
+            <div class="disloc-grid">
+                <div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>Below SMA50 by 11%</span></div><div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>RSI hit 29 (14d ago)</span></div><div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>Touched lower Bollinger</span></div><div class="disloc-pill disloc-not-fired"><span class="disloc-icon">○</span><span>1mo perf -7%</span></div><div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>Near 52w low (0% off)</span></div><div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>5y all-time low</span></div>
+            </div>
+        </div>
+            
+            <div class="company-claude-row">
+                <div class="company-box">
+                    <div class="box-label">🍕 The company</div>
+                    <div class="company-blurb">Accenture plc provides strategy and consulting, industry X, song, and technology and operation services in the Americas, Europe, the Middle East, Africa, and the Asia Pacific.</div>
+                    <div class="fund-grid"><div class="fund-row"><span class="fund-label">Revenue</span><span class="fund-val">$69.7B <span class="fund-up">▲ 7%</span></span></div><div class="fund-row"><span class="fund-label">Profit</span><span class="fund-val">$7.7B <span class="fund-up">▲ 6%</span></span></div><div class="fund-row"><span class="fund-label">Free cash</span><span class="fund-val">$10.9B <span class="fund-up">▲ 26%</span></span></div><div class="fund-row"><span class="fund-label">Debt/Eq</span><span class="fund-val">0.25 <span class="fund-up">✓ low</span></span></div></div>
+                </div>
+                <div class="claude-box">
+                    <div class="claude-header">
+                        <div class="claude-c">C</div>
+                        <div class="claude-label-txt">Claude says</div>
+                        <div class="claude-tag tag-strong-buy">STRONG BUY</div>
+                    </div>
+                    <div class="claude-bullet bullet-warn"><span>●</span><span>Claude API unavailable - using algo score only</span></div>
+                </div>
+            </div>
+            
+            <div class="signals-row"><span class="sig-chip sig-buyback">💰 Buybacks $4.6B</span><span class="sig-chip sig-noflag">✓ No red flags</span><span class="sig-chip sig-eps">⚡ IV rank 63%</span><span class="sig-chip sig-short-good">📉 Short int 3.3% ✓</span></div>
+            
+            <div class="trade-section">
+                <div class="put-row">
+        <div class="put-dte-large">263<span class="dte-unit">DTE</span></div>
+        <span class="put-strike">$95P</span>
+        <div class="put-meta-row">
+            <span>2027-01</span>
+            <span>·</span>
+            <span>-7Δ</span>
+            <span>·</span>
+            <span>47% OTM</span>
+            <span class="otm-mult">×3</span>
+            <span class="safety-pill safety-high">🛡 10/10 safe</span>
+        </div>
+    </div>
+                <div class="put-row">
+            <div class="put-dte-large alt">25<span class="dte-unit">DTE</span></div>
+            <span class="put-strike">$150P</span>
+            <div class="put-meta-row">
+                <span>2026-05-22</span>
+                <span>·</span>
+                <span>-15Δ</span>
+                <span>·</span>
+                <span>16% OTM</span>
+                <span class="otm-mult">×3</span>
+                <span class="safety-pill safety-low">🛡 5/10 risky</span>
+            </div>
+        </div>
+            </div>
+            
+            <div class="hero-stats">
+        <div class="hero-stat hero-bad">
+            <div class="hero-stat-ticker">ACN</div>
+            <div class="hero-stat-label">📉 Off 52w high</div>
+            <div class="hero-stat-val">-45%</div>
+        </div>
+        <div class="hero-stat hero-bad">
+            <div class="hero-stat-ticker">ACN</div>
+            <div class="hero-stat-label">⏰ RSI low</div>
+            <div class="hero-stat-val">14d ago</div>
+        </div>
+        <div class="hero-stat hero-good">
+            <div class="hero-stat-ticker">ACN</div>
+            <div class="hero-stat-label">⚡ Off 52w low</div>
+            <div class="hero-stat-val">+0%</div>
+        </div>
+        <div class="hero-stat hero-good">
+            <div class="hero-stat-ticker">ACN</div>
+            <div class="hero-stat-label">🛡️ IV rank</div>
+            <div class="hero-stat-val">63%</div>
+        </div>
+    </div>
+            <div class="metrics-strip">
+        <div class="metric-tile">
+            <div class="metric-tile-ticker">ACN</div>
+            <div class="metric-tile-label">Market cap</div>
+            <div class="metric-tile-value">$109.8B</div>
+        </div>
+        <div class="metric-tile">
+            <div class="metric-tile-ticker">ACN</div>
+            <div class="metric-tile-label">P/E ratio</div>
+            <div class="metric-tile-value">14.6</div>
+        </div>
+        <div class="metric-tile">
+            <div class="metric-tile-ticker">ACN</div>
+            <div class="metric-tile-label">Dividend</div>
+            <div class="metric-tile-value">3.7%</div>
+        </div>
+        <div class="metric-tile">
+            <div class="metric-tile-ticker">ACN</div>
+            <div class="metric-tile-label">EPS growth</div>
+            <div class="metric-tile-value">4%</div>
+        </div>
+    </div>
+            <div class="chart-section">
+        <div class="chart-svg-box">
+            <svg viewBox="0 0 700 110" xmlns="http://www.w3.org/2000/svg">
+                <line x1="20" y1="20" x2="680" y2="20" stroke="#7c3aed" stroke-dasharray="3,3" stroke-width="0.6"/>
+                <text x="22" y="16" fill="#a78bfa" font-size="9" font-weight="600">52w high $323</text>
+                <line x1="20" y1="92" x2="680" y2="92" stroke="#dc2626" stroke-dasharray="3,3" stroke-width="0.6"/>
+                <text x="22" y="102" fill="#fca5a5" font-size="9" font-weight="600">52w low $178</text>
+                <text x="660" y="60" fill="#f87171" font-size="11" font-weight="700" text-anchor="middle">-39% YoY</text>
+            </svg>
+        </div>
+    </div>
+            <div class="recovery-line">
+        <div class="recovery-line-text">
+            🌱 <strong>Recovery thesis:</strong> Down 45% from high. RSI bounced from <span class="key">29 → 33</span>. 1-month perf <span class="key">-7%</span>. Watch for stabilization.
+        </div>
+    </div>
+            <div class="support-section">
+        <div class="support-header">🪜 Support floors · stress test</div>
+        <div class="support-ladder"><div class="ladder-row">
+            <span class="ladder-label" style="color:#f1f5f9;">Price</span>
+            <span class="ladder-dot" style="background:#fbbf24;"></span>
+            <span class="ladder-value" style="color:#f1f5f9;">$178 now <span class="ladder-pct"></span></span>
+        </div><div class="ladder-row">
+            <span class="ladder-label" style="color:#cbd5e1;">Support</span>
+            <span class="ladder-dot" style="background:#3b82f6;"></span>
+            <span class="ladder-value" style="color:#cbd5e1;">$178 <span class="ladder-pct">−0% (14d low)</span></span>
+        </div><div class="ladder-row">
+            <span class="ladder-label" style="color:#6ee7b7;">Strike</span>
+            <span class="ladder-dot" style="background:#10b981;"></span>
+            <span class="ladder-value" style="color:#6ee7b7;">$95 <span class="ladder-pct">−47% ✓</span></span>
+        </div></div>
+        <div class="stress-line-text">
+            🛡️ <strong>Stress test:</strong> Strike $95 sits <strong>65% below</strong> the April 2025 tariff panic floor of $275. <span class="never">Stock has never traded at $95 in 5 years.</span>
+        </div>
+    </div>
+            
+    <div class="indicators">
+        <div class="indicators-header">ACN · technicals</div>
+        
+    <div class="ind-line">
+        <div class="ind-line-top"><span class="ind-line-name">52w range</span><span class="ind-line-val">$178.36</span></div>
+        <div class="bar-track">
+            <div class="bar-zone range52-zone-low"></div>
+            <div class="bar-zone range52-zone-mid"></div>
+            <div class="bar-zone range52-zone-high"></div>
+            <div class="bar-marker" style="left:0%;"></div>
+        </div>
+        <div class="bar-labels"><span>$178 LOW</span><span>$251</span><span>$323 HIGH</span></div>
+    </div>
+        
+        <div class="ind-line">
+            <div class="ind-line-top"><span class="ind-line-name">50d MA</span><span class="ind-line-val" style="color:#f87171;">-11% below</span></div>
+            <div class="bar-track">
+                <div class="bar-zone dma-zone-bad"></div>
+                <div class="bar-zone dma-zone-good"></div>
+                <div class="bar-marker" style="left:28%;"></div>
+            </div>
+        </div>
+        
+        <div class="ind-line">
+            <div class="ind-line-top"><span class="ind-line-name">200d MA</span><span class="ind-line-val" style="color:#f87171;">-27% below</span></div>
+            <div class="bar-track">
+                <div class="bar-zone dma-zone-bad"></div>
+                <div class="bar-zone dma-zone-good"></div>
+                <div class="bar-marker" style="left:10%;"></div>
+            </div>
+        </div>
+        
+        <div class="ind-line">
+            <div class="ind-line-top"><span class="ind-line-name">RSI 14</span><span class="ind-line-val" style="color:#6ee7b7;">33 · recovering</span></div>
+            <div class="bar-track">
+                <div class="bar-zone rsi-zone-low"></div>
+                <div class="bar-zone rsi-zone-mid"></div>
+                <div class="bar-zone rsi-zone-high"></div>
+                <div class="bar-marker" style="left:33%;"></div>
+            </div>
+            <div class="bar-labels"><span>0 oversold</span><span>50</span><span>100 overbought</span></div>
+        </div>
+        
+        <div class="ind-line">
+            <div class="ind-line-top"><span class="ind-line-name">Bollinger</span><span class="ind-line-val" style="color:#34d399;">Cheap zone</span></div>
+            <div class="bar-track">
+                <div class="bar-zone boll-zone-low"></div>
+                <div class="bar-zone boll-zone-mid"></div>
+                <div class="bar-zone boll-zone-high"></div>
+                <div class="bar-marker" style="left:0%;"></div>
+            </div>
+            <div class="bar-labels"><span>Cheap</span><span>Normal</span><span>Expensive</span></div>
+        </div>
+        
+    <div class="indicators-row">
+        <div class="ind-mini"><div class="mini-label">IV rank</div><div class="mini-val" style="color:#fbbf24;">63%</div></div>
+        <div class="ind-mini"><div class="mini-label">Beta</div><div class="mini-val">1.24</div></div>
+        <div class="ind-mini"><div class="mini-label">Dividend</div><div class="mini-val">3.7%</div></div>
+    </div>
+    </div>
+            
+            <div class="news-section">
+                <div class="news-header">📰 Latest <strong>ACN</strong> news</div>
+                <div class="news-item"><span class="news-icon news-neu">●</span><span></span><span class="news-date"></span></div><div class="news-item"><span class="news-icon news-neu">●</span><span></span><span class="news-date"></span></div><div class="news-item"><span class="news-icon news-neu">●</span><span></span><span class="news-date"></span></div><div class="news-item"><span class="news-icon news-neu">●</span><span></span><span class="news-date"></span></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="pick-bd">
+        <div class="tag-side">BD</div>
+        <div class="pick-body">
+            <div class="card-header">
+                <div class="header-ticker-block">
+                    <a href="https://unusualwhales.com/stock/CRM" target="_blank" class="card-ticker">CRM</a>
+                    <span class="dislocation-emoji">🔻</span>
+                </div>
+                <div class="header-middle">
+                    <div class="header-scores">
+                        <div class="score-block">
+                            <div class="score-label">My Score</div>
+                            <div class="score-badge score-mine">7.5</div>
+                        </div>
+                        <span class="score-sep">·</span>
+                        <div class="score-block">
+                            <div class="score-label score-claude-label">Claude</div>
+                            <div class="score-badge score-claude">7.5</div>
+                        </div>
+                    </div>
+                    <div class="down-pill"><span class="down-emoji">📉</span>DOWN 39% from high · sharp drawdown</div>
+                </div>
+                <div class="header-right">
+                    <div class="company-name">Salesforce, Inc.</div>
+                    <div class="price-row">
+                        <span class="company-price">$178.16</span>
+                        <span class="bargain-inline">🎯 $230</span>
+                    </div>
+                </div>
+            </div>
+            
+            
+        <div class="dislocation-row">
+            <div class="dislocation-header">
+                <span>🎯 Dislocation signals fired (last 14 days)</span>
+                <span class="disloc-count">4 / 6 fired</span>
+            </div>
+            <div class="disloc-grid">
+                <div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>Below SMA50 by 5%</span></div><div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>RSI hit 22 (14d ago)</span></div><div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>Touched lower Bollinger</span></div><div class="disloc-pill disloc-not-fired"><span class="disloc-icon">○</span><span>1mo perf -2%</span></div><div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>Near 52w low (8% off)</span></div><div class="disloc-pill disloc-not-fired"><span class="disloc-icon">○</span><span>5y all-time low</span></div>
+            </div>
+        </div>
+            
+            <div class="company-claude-row">
+                <div class="company-box">
+                    <div class="box-label">🍕 The company</div>
+                    <div class="company-blurb">Salesforce, Inc.</div>
+                    <div class="fund-grid"><div class="fund-row"><span class="fund-label">Revenue</span><span class="fund-val">$41.5B <span class="fund-up">▲ 10%</span></span></div><div class="fund-row"><span class="fund-label">Profit</span><span class="fund-val">$7.5B <span class="fund-up">▲ 20%</span></span></div><div class="fund-row"><span class="fund-label">Free cash</span><span class="fund-val">$14.4B <span class="fund-up">▲ 16%</span></span></div><div class="fund-row"><span class="fund-label">Debt/Eq</span><span class="fund-val">0.30 <span class="fund-up">✓ low</span></span></div></div>
+                </div>
+                <div class="claude-box">
+                    <div class="claude-header">
+                        <div class="claude-c">C</div>
+                        <div class="claude-label-txt">Claude says</div>
+                        <div class="claude-tag tag-buy">BUY</div>
+                    </div>
+                    <div class="claude-bullet bullet-warn"><span>●</span><span>Claude API unavailable - using algo score only</span></div>
+                </div>
+            </div>
+            
+            <div class="signals-row"><span class="sig-chip sig-buyback">💰 Buybacks $12.6B</span><span class="sig-chip sig-noflag">✓ No red flags</span><span class="sig-chip sig-eps">⚡ IV rank 53%</span></div>
+            
+            <div class="trade-section">
+                <div class="put-row">
+        <div class="put-dte-large">263<span class="dte-unit">DTE</span></div>
+        <span class="put-strike">$90P</span>
+        <div class="put-meta-row">
+            <span>2027-01</span>
+            <span>·</span>
+            <span>-7Δ</span>
+            <span>·</span>
+            <span>49% OTM</span>
+            <span class="otm-mult">×3</span>
+            <span class="safety-pill safety-mid">🛡 7/10 ok</span>
+        </div>
+    </div>
+                <div class="put-row">
+            <div class="put-dte-large alt">25<span class="dte-unit">DTE</span></div>
+            <span class="put-strike">$150P</span>
+            <div class="put-meta-row">
+                <span>2026-05-22</span>
+                <span>·</span>
+                <span>-15Δ</span>
+                <span>·</span>
+                <span>16% OTM</span>
+                <span class="otm-mult">×3</span>
+                <span class="safety-pill safety-danger">🛡 1/10 danger</span>
+            </div>
+        </div>
+            </div>
+            
+            <div class="hero-stats">
+        <div class="hero-stat hero-bad">
+            <div class="hero-stat-ticker">CRM</div>
+            <div class="hero-stat-label">📉 Off 52w high</div>
+            <div class="hero-stat-val">-39%</div>
+        </div>
+        <div class="hero-stat hero-bad">
+            <div class="hero-stat-ticker">CRM</div>
+            <div class="hero-stat-label">⏰ RSI low</div>
+            <div class="hero-stat-val">14d ago</div>
+        </div>
+        <div class="hero-stat hero-good">
+            <div class="hero-stat-ticker">CRM</div>
+            <div class="hero-stat-label">⚡ Off 52w low</div>
+            <div class="hero-stat-val">+8%</div>
+        </div>
+        <div class="hero-stat hero-good">
+            <div class="hero-stat-ticker">CRM</div>
+            <div class="hero-stat-label">🛡️ IV rank</div>
+            <div class="hero-stat-val">53%</div>
+        </div>
+    </div>
+            <div class="metrics-strip">
+        <div class="metric-tile">
+            <div class="metric-tile-ticker">CRM</div>
+            <div class="metric-tile-label">Market cap</div>
+            <div class="metric-tile-value">$145.7B</div>
+        </div>
+        <div class="metric-tile">
+            <div class="metric-tile-ticker">CRM</div>
+            <div class="metric-tile-label">P/E ratio</div>
+            <div class="metric-tile-value">22.8</div>
+        </div>
+        <div class="metric-tile">
+            <div class="metric-tile-ticker">CRM</div>
+            <div class="metric-tile-label">Dividend</div>
+            <div class="metric-tile-value">99.0%</div>
+        </div>
+        <div class="metric-tile">
+            <div class="metric-tile-ticker">CRM</div>
+            <div class="metric-tile-label">EPS growth</div>
+            <div class="metric-tile-value">18%</div>
+        </div>
+    </div>
+            <div class="chart-section">
+        <div class="chart-svg-box">
+            <svg viewBox="0 0 700 110" xmlns="http://www.w3.org/2000/svg">
+                <line x1="20" y1="20" x2="680" y2="20" stroke="#7c3aed" stroke-dasharray="3,3" stroke-width="0.6"/>
+                <text x="22" y="16" fill="#a78bfa" font-size="9" font-weight="600">52w high $291</text>
+                <line x1="20" y1="92" x2="680" y2="92" stroke="#dc2626" stroke-dasharray="3,3" stroke-width="0.6"/>
+                <text x="22" y="102" fill="#fca5a5" font-size="9" font-weight="600">52w low $165</text>
+                <text x="660" y="60" fill="#f87171" font-size="11" font-weight="700" text-anchor="middle">-33% YoY</text>
+            </svg>
+        </div>
+    </div>
+            <div class="recovery-line">
+        <div class="recovery-line-text">
+            🌱 <strong>Recovery thesis:</strong> Down 39% from high. RSI bounced from <span class="key">22 → 45</span>. 1-month perf <span class="key">-2%</span>. Watch for stabilization.
+        </div>
+    </div>
+            <div class="support-section">
+        <div class="support-header">🪜 Support floors · stress test</div>
+        <div class="support-ladder"><div class="ladder-row">
+            <span class="ladder-label" style="color:#f1f5f9;">Price</span>
+            <span class="ladder-dot" style="background:#fbbf24;"></span>
+            <span class="ladder-value" style="color:#f1f5f9;">$178 now <span class="ladder-pct"></span></span>
+        </div><div class="ladder-row">
+            <span class="ladder-label" style="color:#cbd5e1;">Support</span>
+            <span class="ladder-dot" style="background:#3b82f6;"></span>
+            <span class="ladder-value" style="color:#cbd5e1;">$165 <span class="ladder-pct">−7% (14d low)</span></span>
+        </div><div class="ladder-row">
+            <span class="ladder-label" style="color:#6ee7b7;">Strike</span>
+            <span class="ladder-dot" style="background:#10b981;"></span>
+            <span class="ladder-value" style="color:#6ee7b7;">$90 <span class="ladder-pct">−49% ✓</span></span>
+        </div></div>
+        <div class="stress-line-text">
+            🛡️ <strong>Stress test:</strong> Strike $90 sits <strong>61% below</strong> the April 2025 tariff panic floor of $230. <span class="never">Stock has never traded at $90 in 5 years.</span>
+        </div>
+    </div>
+            
+    <div class="indicators">
+        <div class="indicators-header">CRM · technicals</div>
+        
+    <div class="ind-line">
+        <div class="ind-line-top"><span class="ind-line-name">52w range</span><span class="ind-line-val">$178.16</span></div>
+        <div class="bar-track">
+            <div class="bar-zone range52-zone-low"></div>
+            <div class="bar-zone range52-zone-mid"></div>
+            <div class="bar-zone range52-zone-high"></div>
+            <div class="bar-marker" style="left:10%;"></div>
+        </div>
+        <div class="bar-labels"><span>$165 LOW</span><span>$228</span><span>$291 HIGH</span></div>
+    </div>
+        
+        <div class="ind-line">
+            <div class="ind-line-top"><span class="ind-line-name">50d MA</span><span class="ind-line-val" style="color:#f87171;">-5% below</span></div>
+            <div class="bar-track">
+                <div class="bar-zone dma-zone-bad"></div>
+                <div class="bar-zone dma-zone-good"></div>
+                <div class="bar-marker" style="left:40%;"></div>
+            </div>
+        </div>
+        
+        <div class="ind-line">
+            <div class="ind-line-top"><span class="ind-line-name">200d MA</span><span class="ind-line-val" style="color:#f87171;">-23% below</span></div>
+            <div class="bar-track">
+                <div class="bar-zone dma-zone-bad"></div>
+                <div class="bar-zone dma-zone-good"></div>
+                <div class="bar-marker" style="left:10%;"></div>
+            </div>
+        </div>
+        
+        <div class="ind-line">
+            <div class="ind-line-top"><span class="ind-line-name">RSI 14</span><span class="ind-line-val" style="color:#fbbf24;">45 · recovering</span></div>
+            <div class="bar-track">
+                <div class="bar-zone rsi-zone-low"></div>
+                <div class="bar-zone rsi-zone-mid"></div>
+                <div class="bar-zone rsi-zone-high"></div>
+                <div class="bar-marker" style="left:45%;"></div>
+            </div>
+            <div class="bar-labels"><span>0 oversold</span><span>50</span><span>100 overbought</span></div>
+        </div>
+        
+        <div class="ind-line">
+            <div class="ind-line-top"><span class="ind-line-name">Bollinger</span><span class="ind-line-val" style="color:#34d399;">Cheap zone</span></div>
+            <div class="bar-track">
+                <div class="bar-zone boll-zone-low"></div>
+                <div class="bar-zone boll-zone-mid"></div>
+                <div class="bar-zone boll-zone-high"></div>
+                <div class="bar-marker" style="left:24%;"></div>
+            </div>
+            <div class="bar-labels"><span>Cheap</span><span>Normal</span><span>Expensive</span></div>
+        </div>
+        
+    <div class="indicators-row">
+        <div class="ind-mini"><div class="mini-label">IV rank</div><div class="mini-val" style="color:#fbbf24;">53%</div></div>
+        <div class="ind-mini"><div class="mini-label">Beta</div><div class="mini-val">1.29</div></div>
+        <div class="ind-mini"><div class="mini-label">Dividend</div><div class="mini-val">99.0%</div></div>
+    </div>
+    </div>
+            
+            <div class="news-section">
+                <div class="news-header">📰 Latest <strong>CRM</strong> news</div>
+                <div class="news-item"><span class="news-icon news-neu">●</span><span></span><span class="news-date"></span></div><div class="news-item"><span class="news-icon news-neu">●</span><span></span><span class="news-date"></span></div><div class="news-item"><span class="news-icon news-neu">●</span><span></span><span class="news-date"></span></div><div class="news-item"><span class="news-icon news-neu">●</span><span></span><span class="news-date"></span></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="pick-bd">
+        <div class="tag-side">BD</div>
+        <div class="pick-body">
+            <div class="card-header">
+                <div class="header-ticker-block">
+                    <a href="https://unusualwhales.com/stock/HCA" target="_blank" class="card-ticker">HCA</a>
+                    <span class="dislocation-emoji">🔻</span>
+                </div>
+                <div class="header-middle">
+                    <div class="header-scores">
+                        <div class="score-block">
+                            <div class="score-label">My Score</div>
+                            <div class="score-badge score-mine">7.0</div>
+                        </div>
+                        <span class="score-sep">·</span>
+                        <div class="score-block">
+                            <div class="score-label score-claude-label">Claude</div>
+                            <div class="score-badge score-claude">7.0</div>
+                        </div>
+                    </div>
+                    <div class="down-pill"><span class="down-emoji">📉</span>DOWN 21% from high · beaten down</div>
+                </div>
+                <div class="header-right">
+                    <div class="company-name">HCA Healthcare, Inc.</div>
+                    <div class="price-row">
+                        <span class="company-price">$432.46</span>
+                        <span class="bargain-inline">🎯 $318</span>
+                    </div>
+                </div>
+            </div>
+            
+            
+        <div class="dislocation-row">
+            <div class="dislocation-header">
+                <span>🎯 Dislocation signals fired (last 14 days)</span>
+                <span class="disloc-count">4 / 6 fired</span>
+            </div>
+            <div class="disloc-grid">
+                <div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>Below SMA50 by 15%</span></div><div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>RSI hit 29</span></div><div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>Touched lower Bollinger</span></div><div class="disloc-pill disloc-fired"><span class="disloc-icon">●</span><span>1mo perf -11%</span></div><div class="disloc-pill disloc-not-fired"><span class="disloc-icon">○</span><span>Near 52w low (32% off)</span></div><div class="disloc-pill disloc-not-fired"><span class="disloc-icon">○</span><span>5y all-time low</span></div>
+            </div>
+        </div>
+            
+            <div class="company-claude-row">
+                <div class="company-box">
+                    <div class="box-label">🍕 The company</div>
+                    <div class="company-blurb">HCA Healthcare, Inc.</div>
+                    <div class="fund-grid"><div class="fund-row"><span class="fund-label">Revenue</span><span class="fund-val">$75.6B <span class="fund-up">▲ 7%</span></span></div><div class="fund-row"><span class="fund-label">Profit</span><span class="fund-val">$6.8B <span class="fund-up">▲ 18%</span></span></div><div class="fund-row"><span class="fund-label">Free cash</span><span class="fund-val">$7.7B <span class="fund-up">▲ 36%</span></span></div><div class="fund-row"><span class="fund-label">Debt/Eq</span><span class="fund-val"><span class="fund-na">— no data</span></span></div></div>
+                </div>
+                <div class="claude-box">
+                    <div class="claude-header">
+                        <div class="claude-c">C</div>
+                        <div class="claude-label-txt">Claude says</div>
+                        <div class="claude-tag tag-buy">BUY</div>
+                    </div>
+                    <div class="claude-bullet bullet-warn"><span>●</span><span>Claude API unavailable - using algo score only</span></div>
+                </div>
+            </div>
+            
+            <div class="signals-row"><span class="sig-chip sig-buyback">💰 Buybacks $10.1B</span><span class="sig-chip sig-noflag">✓ No red flags</span><span class="sig-chip sig-eps">⚡ IV rank 77%</span><span class="sig-chip sig-short-good">📉 Short int 2.7% ✓</span></div>
+            
+            <div class="trade-section">
+                <div class="put-row">
+        <div class="put-dte-large">263<span class="dte-unit">DTE</span></div>
+        <span class="put-strike">$320P</span>
+        <div class="put-meta-row">
+            <span>2027-01</span>
+            <span>·</span>
+            <span>-12Δ</span>
+            <span>·</span>
+            <span>26% OTM</span>
+            <span class="otm-mult">×3</span>
+            <span class="safety-pill safety-mid">🛡 7/10 ok</span>
+        </div>
+    </div>
+                
+            </div>
+            
+            <div class="hero-stats">
+        <div class="hero-stat hero-bad">
+            <div class="hero-stat-ticker">HCA</div>
+            <div class="hero-stat-label">📉 Off 52w high</div>
+            <div class="hero-stat-val">-21%</div>
+        </div>
+        <div class="hero-stat hero-bad">
+            <div class="hero-stat-ticker">HCA</div>
+            <div class="hero-stat-label">⏰ RSI low</div>
+            <div class="hero-stat-val">0d ago</div>
+        </div>
+        <div class="hero-stat hero-good">
+            <div class="hero-stat-ticker">HCA</div>
+            <div class="hero-stat-label">⚡ Off 52w low</div>
+            <div class="hero-stat-val">+32%</div>
+        </div>
+        <div class="hero-stat hero-good">
+            <div class="hero-stat-ticker">HCA</div>
+            <div class="hero-stat-label">🛡️ IV rank</div>
+            <div class="hero-stat-val">77%</div>
+        </div>
+    </div>
+            <div class="metrics-strip">
+        <div class="metric-tile">
+            <div class="metric-tile-ticker">HCA</div>
+            <div class="metric-tile-label">Market cap</div>
+            <div class="metric-tile-value">$96.7B</div>
+        </div>
+        <div class="metric-tile">
+            <div class="metric-tile-ticker">HCA</div>
+            <div class="metric-tile-label">P/E ratio</div>
+            <div class="metric-tile-value">14.9</div>
+        </div>
+        <div class="metric-tile">
+            <div class="metric-tile-ticker">HCA</div>
+            <div class="metric-tile-label">Dividend</div>
+            <div class="metric-tile-value">72.0%</div>
+        </div>
+        <div class="metric-tile">
+            <div class="metric-tile-ticker">HCA</div>
+            <div class="metric-tile-label">EPS growth</div>
+            <div class="metric-tile-value">11%</div>
+        </div>
+    </div>
+            <div class="chart-section">
+        <div class="chart-svg-box">
+            <svg viewBox="0 0 700 110" xmlns="http://www.w3.org/2000/svg">
+                <line x1="20" y1="20" x2="680" y2="20" stroke="#7c3aed" stroke-dasharray="3,3" stroke-width="0.6"/>
+                <text x="22" y="16" fill="#a78bfa" font-size="9" font-weight="600">52w high $545</text>
+                <line x1="20" y1="92" x2="680" y2="92" stroke="#dc2626" stroke-dasharray="3,3" stroke-width="0.6"/>
+                <text x="22" y="102" fill="#fca5a5" font-size="9" font-weight="600">52w low $328</text>
+                <text x="660" y="60" fill="#34d399" font-size="11" font-weight="700" text-anchor="middle">+27% YoY</text>
+            </svg>
+        </div>
+    </div>
+            <div class="recovery-line">
+        <div class="recovery-line-text">
+            🌱 <strong>Recovery thesis:</strong> Down 21% from high. RSI bounced from <span class="key">29 → 29</span>. 1-month perf <span class="key">-11%</span>. Watch for stabilization.
+        </div>
+    </div>
+            <div class="support-section">
+        <div class="support-header">🪜 Support floors · stress test</div>
+        <div class="support-ladder"><div class="ladder-row">
+            <span class="ladder-label" style="color:#f1f5f9;">Price</span>
+            <span class="ladder-dot" style="background:#fbbf24;"></span>
+            <span class="ladder-value" style="color:#f1f5f9;">$432 now <span class="ladder-pct"></span></span>
+        </div><div class="ladder-row">
+            <span class="ladder-label" style="color:#cbd5e1;">Support</span>
+            <span class="ladder-dot" style="background:#3b82f6;"></span>
+            <span class="ladder-value" style="color:#cbd5e1;">$432 <span class="ladder-pct">−0% (14d low)</span></span>
+        </div><div class="ladder-row">
+            <span class="ladder-label" style="color:#6ee7b7;">Strike</span>
+            <span class="ladder-dot" style="background:#10b981;"></span>
+            <span class="ladder-value" style="color:#6ee7b7;">$320 <span class="ladder-pct">−26% ✓</span></span>
+        </div><div class="ladder-row tariff">
+            <span class="ladder-label" style="color:#c4b5fd;">⚠ Tariff</span>
+            <span class="ladder-dot" style="background:#a855f7;"></span>
+            <span class="ladder-value" style="color:#c4b5fd;">$318 <span class="ladder-pct">−26% (Apr 2025)</span></span>
+        </div></div>
+        <div class="stress-line-text">
+            🛡️ <strong>Stress test:</strong> Strike $320 sits <strong>-0% below</strong> the April 2025 tariff panic floor of $318. <span class="never">Stock has never traded at $320 in 5 years.</span>
+        </div>
+    </div>
+            
+    <div class="indicators">
+        <div class="indicators-header">HCA · technicals</div>
+        
+    <div class="ind-line">
+        <div class="ind-line-top"><span class="ind-line-name">52w range</span><span class="ind-line-val">$432.46</span></div>
+        <div class="bar-track">
+            <div class="bar-zone range52-zone-low"></div>
+            <div class="bar-zone range52-zone-mid"></div>
+            <div class="bar-zone range52-zone-high"></div>
+            <div class="bar-marker" style="left:48%;"></div>
+        </div>
+        <div class="bar-labels"><span>$328 LOW</span><span>$437</span><span>$545 HIGH</span></div>
+    </div>
+        
+        <div class="ind-line">
+            <div class="ind-line-top"><span class="ind-line-name">50d MA</span><span class="ind-line-val" style="color:#f87171;">-15% below</span></div>
+            <div class="bar-track">
+                <div class="bar-zone dma-zone-bad"></div>
+                <div class="bar-zone dma-zone-good"></div>
+                <div class="bar-marker" style="left:21%;"></div>
+            </div>
+        </div>
+        
+        <div class="ind-line">
+            <div class="ind-line-top"><span class="ind-line-name">200d MA</span><span class="ind-line-val" style="color:#f87171;">-5% below</span></div>
+            <div class="bar-track">
+                <div class="bar-zone dma-zone-bad"></div>
+                <div class="bar-zone dma-zone-good"></div>
+                <div class="bar-marker" style="left:40%;"></div>
+            </div>
+        </div>
+        
+        <div class="ind-line">
+            <div class="ind-line-top"><span class="ind-line-name">RSI 14</span><span class="ind-line-val" style="color:#6ee7b7;">29 · oversold</span></div>
+            <div class="bar-track">
+                <div class="bar-zone rsi-zone-low"></div>
+                <div class="bar-zone rsi-zone-mid"></div>
+                <div class="bar-zone rsi-zone-high"></div>
+                <div class="bar-marker" style="left:29%;"></div>
+            </div>
+            <div class="bar-labels"><span>0 oversold</span><span>50</span><span>100 overbought</span></div>
+        </div>
+        
+        <div class="ind-line">
+            <div class="ind-line-top"><span class="ind-line-name">Bollinger</span><span class="ind-line-val" style="color:#34d399;">Cheap zone</span></div>
+            <div class="bar-track">
+                <div class="bar-zone boll-zone-low"></div>
+                <div class="bar-zone boll-zone-mid"></div>
+                <div class="bar-zone boll-zone-high"></div>
+                <div class="bar-marker" style="left:0%;"></div>
+            </div>
+            <div class="bar-labels"><span>Cheap</span><span>Normal</span><span>Expensive</span></div>
+        </div>
+        
+    <div class="indicators-row">
+        <div class="ind-mini"><div class="mini-label">IV rank</div><div class="mini-val" style="color:#6ee7b7;">77%</div></div>
+        <div class="ind-mini"><div class="mini-label">Beta</div><div class="mini-val">1.37</div></div>
+        <div class="ind-mini"><div class="mini-label">Dividend</div><div class="mini-val">72.0%</div></div>
+    </div>
+    </div>
+            
+            <div class="news-section">
+                <div class="news-header">📰 Latest <strong>HCA</strong> news</div>
+                <div class="news-item"><span class="news-icon news-neu">●</span><span></span><span class="news-date"></span></div><div class="news-item"><span class="news-icon news-neu">●</span><span></span><span class="news-date"></span></div><div class="news-item"><span class="news-icon news-neu">●</span><span></span><span class="news-date"></span></div><div class="news-item"><span class="news-icon news-neu">●</span><span></span><span class="news-date"></span></div>
+            </div>
+        </div>
+    </div>
+    
+</body>
+</html>
